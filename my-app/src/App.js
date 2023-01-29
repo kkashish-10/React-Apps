@@ -1,13 +1,22 @@
-import Welcome from "./components/Welcome";
+import React from 'react'
 
-function App() {
+const Greeting = ({ text }) => {
+  return <p>{text}</p>
+}
+
+export function Parantheses() {
+  return (<h1> As usual we can call the function using name of the function followed by
+    Parentheses </h1>);
+}
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <Welcome name='Kashish' />
-      </header>
+    <div><p>Hello React</p>
+      <Greeting text="Hello Instance 1 of Greeting" />
+      <Greeting text="Hello Instance 2 of Greeting" />
+      <Parantheses />
     </div>
-  );
+  )
 }
 
 export default App;
