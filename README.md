@@ -24,6 +24,7 @@
 
   - https://reactjs.org/docs/components-and-props.html
   - Components let you split the UI into independent, reusable pieces, and think about each piece in isolation.Conceptually, components are like JavaScript functions. They accept arbitrary inputs (called “props”) and return React elements describing what should appear on the screen.
+  - `Note: Always start component names with a capital letter.React is pretty flexible but it has a single strict rule:All React components must act like pure functions with respect to their props.Of course, application UIs are dynamic and change over time. In the next section, we will introduce a new concept of “state”. State allows React components to change their output over time in response to user actions, network responses, and anything else, without violating this rule.`
 
     ### Functional and Class Components
 
