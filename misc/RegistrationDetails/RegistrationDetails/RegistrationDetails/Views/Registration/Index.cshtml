@@ -1,0 +1,230 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model RegistrationDetails.Models.RegistrationDetailsModel
+
+@using System.Web.Mvc;
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" defer="defer"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            alert("hi");
+            $('#myTable').DataTable();
+        });
+    </script>
+
+    <script type="text/javascript">
+
+        function onchangeevent() {
+            var a = document.getElementById('Email').value;
+            //  var data = JSON.stringify(a);
+            var url = "/Registration/checkEm";
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: { "email": a },
+                dataType: "text",
+                success: function (recData) {
+                    if (recData == "1") {
+                        document.getElementById('Email').value = "";
+                        alert('Email Already Exist');
+                    }
+                },
+                error: function () { alert('A error'); }
+            });
+        }
+
+        function onload() {
+            document.getElementById('Email').value = "";
+            document.getElementById('Name').value = "";
+            document.getElementById('Mobile').value = "";
+            document.getElementById('Address').value = "";
+            document.getElementById('Course').value = "";
+        }
+        var country = "";
+        function onCountryChange(ele) {
+            country = ele.value;
+            var url = "/Registration/GetAllState";
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: { "country": country },
+                dataType: "text",
+                success: function (data) {
+                    var res = data.split(',');
+
+                    var s = '<option value="-1">Select state</option>';
+                    for (var i = 0; i < res.length; i++) {
+                        s += '<option value="' + res[i] + '">' + res[i] + '</option>';
+                    }
+                    $("#StateDropdown").html(s);
+                },
+                error: function () { alert('A error'); }
+            });
+        }
+
+        function onStateChange(ele) {
+            var state = ele.value;
+
+            var url = "/Registration/GetAllCity";
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: { "state": state, "country": country },
+                dataType: "text",
+                success: function (data) {
+                    var res = data.split(',');
+                    var s = '<option value="-1">Select City</option>';
+                    for (var i = 0; i < res.length; i++) {
+                        s += '<option value="' + res[i] + '">' + res[i] + '</option>';
+                    }
+                    $("#CityList").html(s);
+                },
+                error: function () { alert('A error'); }
+            });
+        }
+        function CheckBoxClick(ele) {
+            var list = [];
+            if ($("#courselist").val() != "") {
+                list = $("#courselist").val().split(',');
+            }
+            if (ele.checked) {
+                list.push(ele.value);
+            } else {
+                list.pop(ele.value);
+            }
+            var s = "";
+            for (var i = 0; i < list.length; i++) {
+                s += list[i] + ",";
+            }
+            $("#Course").val(s.substring(0, s.length - 1));
+            $("#courselist").val(s.substring(0, s.length - 1));
+        }
+    </script>
+</head>
+<h2>Registration Form</h2>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        .errmsg {
+            border: 2px;
+            border-color: red;
+        }
+    </style>
+</head>
+
+<body onload="onload()">
+
+
+
+    @using (Html.BeginForm("Submit", "Registration", FormMethod.Post))
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name)<br />
+            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @id = "Name", @required = "required" })<br />
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Email)<br />
+            @Html.TextBoxFor(m => m.Email, new
+            {
+                @class = "form-control",
+                @id = "Email",
+                @onchange = "onchangeevent();",
+                @required = "required"
+       ,
+           @type = "email"
+       })<br />
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Mobile)<br />
+            @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control", @id = "Mobile", @required = "required", @type = "number" })<br />
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Address)<br />
+            @Html.TextBoxFor(m => m.Address, new { @class = "form-control", @id = "Address", @required = "required" })<br />
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Country)<br />
+            @Html.DropDownListFor(m => m.Country, (IEnumerable<SelectListItem>)ViewBag.CountryList, "Select Country",
+           new { @class = "form-control", @id = "CountryList", @onchange = "onCountryChange(this);", @required = "required" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.State)<br />
+            @Html.DropDownListFor(m => m.State, (IEnumerable<SelectListItem>)ViewBag.StateList,
+           "Select State", new
+                {
+                    @class = "form-control",
+                    @id = "StateDropdown",
+                    @onchange = "onStateChange(this)",
+               @required = "required"
+           })
+
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.City)<br />
+            @Html.DropDownListFor(m => m.City, (IEnumerable<SelectListItem>)ViewData["CityList"], "Select City",
+           new { @class = "form-control", @id = "CityList", @required = "required" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Course)<br />
+            @Html.TextBoxFor(m => m.Course, new { @class = "form-control", @id = "Course", @required = "required" })<br />
+            <input type="hidden" id="courselist" value="" />
+            B.tech<input type="checkbox" onchange="CheckBoxClick(this)" value="B-tech" />
+            M.tech<input type="checkbox" onchange="CheckBoxClick(this)" value="M-tech" />
+            BBA<input type="checkbox" onchange="CheckBoxClick(this)" value="BBA" />
+            MBA<input type="checkbox" onchange="CheckBoxClick(this)" value="MBA" />
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn success" type="submit">Submit</button>
+        </div>
+
+    }
+
+    <br />
+    <br />
+    <hr />
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Country</th>
+                <th>State</th>
+                <th>City</th>
+                <th>Mobile</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var temp in Model.dataList)
+            {
+                <tr>
+                    <td>@temp.Name</td>
+                    <td>@temp.Email</td>
+                    <td>@temp.Address</td>
+                    <td>@temp.Country</td>
+                    <td>@temp.State</td>
+                    <td>@temp.City</td>
+                    <td>@temp.Mobile</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @*<button id="my-button" onclick="location.href='@Url.Action("Submit", "Registration")'">Submit</button>*@
+</body>
+</html>
+
+
