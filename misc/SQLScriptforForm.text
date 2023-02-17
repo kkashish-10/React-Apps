@@ -1,0 +1,85 @@
+--for creating table  Registration 
+
+Create Table RegistrationDetails(
+Id int IDENTITY(1,1) Primary key  NOT NULL  ,
+Name varchar(60) Null,
+Email varchar(100)Null,
+Address varchar(100)Null,
+Mobile varchar(20)Null,
+Country varchar(60)Null,
+State varchar(60)Null,
+City varchar(60)Null,
+Course varchar(60)Null)
+
+-- for creating stored procedure to save details 
+
+
+CREATE PROCEDURE SubmitDetails
+@Name varchar(60) Null,
+@Email varchar(100)Null,
+@Address varchar(100)Null,
+@Mobile varchar(20)Null,
+@Country varchar(60)Null,
+@State varchar(60)Null,
+@City varchar(60)Null,
+@Course varchar(60)
+As
+Begin SET NOCOUNT ON;
+insert into RegistrationDetails(Name,Email,Address,Mobile,Country,State,City,Course ) Values(@Name,@Email,@Address,@Mobile,@Country,@State,@City,@Course)
+End
+Go
+
+
+
+--- stored procedure for duplicate email check
+
+
+Create PROCEDURE [dbo].[CheckDuplicateEmail]
+@Email varchar(100)Null
+As
+select Count(email) as CountEmail from Registrationdetails where email=@Email
+
+
+
+
+--for getting data
+
+Create PROCEDURE GetAllData
+As
+Begin SET NOCOUNT ON;
+Select * from Registrationdetails order by 1 desc
+End
+
+--for all city
+Create PROCEDURE GetAllCity
+@State varchar(60),
+@Country varchar(60)
+As
+Begin SET NOCOUNT ON;
+Select distinct(city) from countrystatecity where country=@Country and state=@State
+End
+
+--for country
+
+Create PROCEDURE GetAllCountry
+As
+Begin SET NOCOUNT ON;
+Select distinct(country) from countrystatecity 
+End
+
+--for all atate
+ 
+Create PROCEDURE GetAllState
+@Country varchar(60)
+As
+Begin SET NOCOUNT ON;
+Select distinct(state) from countrystatecity where country=@Country 
+End
+
+--for getting countryStateCity
+
+Create Table CountryStateCity(
+Country varchar(60),
+State varchar(100),
+City varchar(100),
+)
