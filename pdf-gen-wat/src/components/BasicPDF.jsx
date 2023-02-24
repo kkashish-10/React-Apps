@@ -6,7 +6,7 @@ import { Document, Page, Text, View, StyleSheet, PDFViewer } from '@react-pdf/re
 const styles = StyleSheet.create({
   page: {
     backgroundColor: 'white',
-    color: 'black'
+    // color: 'black'
   },
   section: {
     margin: 10,
